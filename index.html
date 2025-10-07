@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interface | Chroma</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <canvas id="fluid-canvas"></canvas>
+    <div id="canvas-filter"></div>
+
+    <div id="app-container">
+
+        <aside id="sidebar">
+            <div id="sidebar-header">
+                <button id="new-chat-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 3a.75.75 0 01.75.75v5.5h5.5a.75.75 0 010 1.5h-5.5v5.5a.75.75 0 01-1.5 0v-5.5h-5.5a.75.75 0 010-1.5h5.5v-5.5A.75.75 0 0110 3z" /></svg>
+                    New Chat
+                </button>
+            </div>
+            <nav id="conversation-history"></nav>
+        </aside>
+
+        <main id="chat-area">
+            <header>
+                <div class="header-left">
+                    <button id="sidebar-toggle-btn" aria-label="Toggle Sidebar">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10zm0 5.25a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <h1>Chroma AI</h1>
+                </div>
+                <div id="current-time"></div>
+            </header>
+
+            <div id="chat-container"></div>
+            
+            <footer>
+                <div id="error-container"></div>
+                <div id="file-preview-container"></div>
+                <div id="input-area">
+                    <button id="upload-btn" aria-label="Upload File">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243h.001l.497-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a4.5 4.5 0 01-6.364-6.364l7-7a4.5 4.5 0 016.368 6.36l-3.455 3.553A2.625 2.625 0 117.44 9.56l.498-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a1.125 1.125 0 001.592 1.591l3.455-3.554a3 3 0 000-4.242z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <input type="file" id="file-input" hidden accept="image/*">
+                    <input type="text" id="user-input" placeholder="Message Chroma AI…" autocomplete="off">
+                    <button id="send-btn" aria-label="Send Message">
+                        <svg id="send-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3.105 3.105a.75.75 0 01.884-.043l11.25 6.25a.75.75 0 010 1.372l-11.25 6.25a.75.75 0 01-.884-.043.75.75 0 01-.192-.884l3.086-7.201L2.913 4.029a.75.75 0 01.192-.884z" /></svg>
+                        <div id="loading-spinner"></div>
+                    </button>
+                </div>
+            </footer>
+        </main>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
