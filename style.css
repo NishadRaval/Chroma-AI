@@ -1,22 +1,38 @@
+
 :root {
     --bg-color: #0a0a0a;
     --surface-color: #1a1a1a;
     --sidebar-color: #121212;
     --primary-text: #f0f0f0;
     --secondary-text: #888;
-    --accent-color: #3b82f6;
+    --accent-color: #3b82f6; 
     --accent-glow: rgba(59, 130, 246, 0.3);
     --user-bubble: #3a3a3a;
     --ai-bubble: #2a2a2a;
     --border-color: rgba(255, 255, 255, 0.1);
+
+    --app-height: 100vh;
 }
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--primary-text); overflow: hidden; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--primary-text);
+    overflow: hidden;
+}
 
 #fluid-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; filter: blur(40px); }
 #canvas-filter { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
 
-#app-container { display: flex; height: 100vh; width: 100vw; position: relative; z-index: 2; }
+#app-container {
+    display: flex;
+    height: var(--app-height);
+    width: 100vw;
+    position: relative;
+    z-index: 2;
+}
 
 #sidebar { width: 260px; background-color: var(--sidebar-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; flex-shrink: 0; transition: margin-left 0.3s ease; }
 #app-container.sidebar-collapsed #sidebar { margin-left: -260px; }
@@ -26,7 +42,6 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); colo
 #new-chat-btn svg { width: 18px; height: 18px; margin-right: 0.5rem; }
 
 #conversation-history { flex-grow: 1; overflow-y: auto; padding: 0.75rem; }
-
 .history-item { display: flex; align-items: center; justify-content: space-between; border-radius: 6px; transition: background-color 0.2s ease; }
 .history-item:hover { background-color: var(--surface-color); }
 .history-item a { flex-grow: 1; padding: 0.6rem 0.8rem; text-decoration: none; font-size: 0.9rem; color: var(--secondary-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.2s ease; }
@@ -34,16 +49,12 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); colo
 .history-item a.active { background-color: var(--accent-color); color: white; font-weight: 600; border-radius: 6px; }
 .history-item:hover a.active { color: white; }
 
-.delete-chat-btn {
-    background: none; border: none; color: var(--secondary-text); cursor: pointer;
-    padding: 0.5rem; border-radius: 6px; display: flex; align-items: center;
-    justify-content: center; opacity: 0; transition: all 0.2s ease;
-}
+.delete-chat-btn { background: none; border: none; color: var(--secondary-text); cursor: pointer; padding: 0.5rem; border-radius: 6px; display: flex; align-items: center; justify-content: center; opacity: 0; transition: all 0.2s ease; }
 .history-item:hover .delete-chat-btn { opacity: 1; }
 .delete-chat-btn:hover { color: #ef4444; }
 .delete-chat-btn svg { width: 16px; height: 16px; }
 
-#chat-area { flex-grow: 1; display: flex; flex-direction: column; height: 100vh; }
+#chat-area { flex-grow: 1; display: flex; flex-direction: column; height: 100%; /* Changed from 100vh */ }
 header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); background-color: rgba(10, 10, 10, 0.5); backdrop-filter: blur(10px); }
 .header-left { display: flex; align-items: center; gap: 0.75rem; }
 #sidebar-toggle-btn { background: none; border: none; color: var(--secondary-text); cursor: pointer; padding: 0.5rem; border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
