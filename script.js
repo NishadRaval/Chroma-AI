@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    const setAppHeight = () => {
+        const doc = document.documentElement;
+        doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+    };
+    window.addEventListener('resize', setAppHeight);
+    setAppHeight();
+
     const appContainer = document.getElementById('app-container');
     const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
     const chatContainer = document.getElementById('chat-container');
@@ -15,15 +22,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('file-input');
     const filePreviewContainer = document.getElementById('file-preview-container');
 
-
     const API_KEY = "AIzaSyAzF61hHS4fVQjvKQ8JZBB3A5ddDlckQbY";
 
     let currentConversationId = null;
     let attachedFile = null;
 
-
-    const getConversations = () => JSON.parse(localStorage.getItem('conversations')) || {};
-    const saveConversations = (conversations) => localStorage.setItem('conversations', JSON.stringify(conversations));
+    const getConversations = () => {
+        return JSON.parse(localStorage.getItem('conversations')) || {};
+    };
+    const saveConversations = (conversations) => {
+        localStorage.setItem('conversations', JSON.stringify(conversations));
+    };
 
     const formatAIResponse = (text) => {
         let safeText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -34,14 +43,24 @@ document.addEventListener('DOMContentLoaded', () => {
         blocks.forEach(block => {
             block = block.trim();
             if (block.startsWith('* ')) {
-                if (!inList) { html += '<ul>'; inList = true; }
+                if (!inList) {
+                    html += '<ul>';
+                    inList = true;
+                }
                 html += `<li>${block.substring(2)}</li>`;
             } else {
-                if (inList) { html += '</ul>'; inList = false; }
-                if (block) { html += `<p>${block}</p>`; }
+                if (inList) {
+                    html += '</ul>';
+                    inList = false;
+                }
+                if (block) {
+                    html += `<p>${block}</p>`;
+                }
             }
         });
-        if (inList) html += '</ul>';
+        if (inList) {
+            html += '</ul>';
+        }
         return html;
     };
     
@@ -52,7 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (currentConversationId === idToDelete) {
             const remainingIds = Object.keys(conversations).sort((a, b) => b - a);
-            loadConversation(remainingIds.length > 0 ? remainingIds[0] : null);
+            const nextIdToLoad = remainingIds.length > 0 ? remainingIds[0] : null;
+            loadConversation(nextIdToLoad);
         } else {
             renderSidebar();
         }
@@ -61,21 +81,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderSidebar = () => {
         const conversations = getConversations();
         conversationHistoryContainer.innerHTML = '';
-        Object.keys(conversations).sort((a, b) => b - a).forEach(id => {
+        const sortedIds = Object.keys(conversations).sort((a, b) => b - a);
+        
+        sortedIds.forEach(id => {
             const conversation = conversations[id];
             const itemContainer = document.createElement('div');
             itemContainer.className = 'history-item';
+
             const link = document.createElement('a');
             link.href = '#';
             link.textContent = conversation.title;
             link.dataset.id = id;
-            if (id === currentConversationId) link.classList.add('active');
-            link.onclick = (e) => { e.preventDefault(); loadConversation(id); };
+            if (id === currentConversationId) {
+                link.classList.add('active');
+            }
+            link.onclick = (e) => {
+                e.preventDefault();
+                loadConversation(id);
+            };
+            
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-chat-btn';
             deleteBtn.setAttribute('aria-label', 'Delete chat');
             deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193v-.443A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z" clip-rule="evenodd" /></svg>`;
-            deleteBtn.onclick = (e) => { e.stopPropagation(); handleDeleteConversation(id); };
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                handleDeleteConversation(id);
+            };
+
             itemContainer.appendChild(link);
             itemContainer.appendChild(deleteBtn);
             conversationHistoryContainer.appendChild(itemContainer);
@@ -83,9 +116,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const loadConversation = (id) => {
-        if (!id) { startNewChat(); return; }
+        if (!id) {
+            startNewChat();
+            return;
+        }
         const conversations = getConversations();
-        if (!conversations[id]) { startNewChat(); return; }
+        if (!conversations[id]) {
+            startNewChat();
+            return;
+        }
         currentConversationId = id;
         const conversation = conversations[id];
         chatContainer.innerHTML = '';
@@ -109,7 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const bubble = document.createElement('div');
         bubble.className = 'message-bubble';
         let finalContent = (sender === 'ai') ? formatAIResponse(content) : content;
-        if (fileInfo) finalContent += `<br><small><em>(Attached: ${fileInfo.name})</em></small>`;
+        if (fileInfo) {
+            finalContent += `<br><small><em>(Attached: ${fileInfo.name})</em></small>`;
+        }
         bubble.innerHTML = finalContent;
         wrapper.appendChild(bubble);
         chatContainer.appendChild(wrapper);
@@ -156,8 +197,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const handleSendMessage = async () => {
         const userMessage = userInput.value.trim();
-        if ((!userMessage && !attachedFile) || sendBtn.disabled) return;
-        if (!API_KEY) { showError("API key is missing."); return; }
+        if ((!userMessage && !attachedFile) || sendBtn.disabled) {
+            return;
+        }
+        if (!API_KEY) {
+            showError("API key is missing.");
+            return;
+        }
         
         setLoading(true);
         errorContainer.innerHTML = '';
@@ -180,13 +226,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const userMessageToSave = { sender: 'user', content: userMessage, file: attachedFile };
         conversations[currentConversationId].messages.push(userMessageToSave);
         saveConversations(conversations);
-        if(isNewChat) renderSidebar();
+        if(isNewChat) {
+            renderSidebar();
+        }
         
         const apiHistory = [];
         conversations[currentConversationId].messages.forEach(msg => {
             const parts = [];
-            if (msg.content) parts.push({ text: msg.content });
-            if (msg.file) parts.push({ inlineData: { mimeType: msg.file.mimeType, data: msg.file.data } });
+            if (msg.content) {
+                parts.push({ text: msg.content });
+            }
+            if (msg.file) {
+                parts.push({ inlineData: { mimeType: msg.file.mimeType, data: msg.file.data } });
+            }
             if (parts.length > 0) {
                  apiHistory.push({ role: msg.sender === 'user' ? 'user' : 'model', parts: parts });
             }
@@ -205,7 +257,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ contents: apiHistory }),
             });
 
-            if (!response.ok) throw new Error((await response.json()).error?.message || "Network error.");
+            if (!response.ok) {
+                throw new Error((await response.json()).error?.message || "Network error.");
+            }
             const result = await response.json();
             const aiResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
             
@@ -217,7 +271,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 addMessageToUI('ai', "I'm sorry, I received an empty response.");
             }
-
         } catch (error) {
             showError(`An error occurred: ${error.message}`);
         } finally {
@@ -239,16 +292,19 @@ document.addEventListener('DOMContentLoaded', () => {
         timeElement.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
-
     sidebarToggleBtn.addEventListener('click', () => appContainer.classList.toggle('sidebar-collapsed'));
     newChatBtn.addEventListener('click', startNewChat);
     uploadBtn.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', handleFileUpload);
     sendBtn.addEventListener('click', handleSendMessage);
     userInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleSendMessage(); } });
+    
     updateTime();
     setInterval(updateTime, 1000);
-    loadConversation(Object.keys(getConversations()).sort((a, b) => b - a)[0]);
+    
+    const initialConversations = getConversations();
+    const latestId = Object.keys(initialConversations).sort((a, b) => b - a)[0];
+    loadConversation(latestId);
 });
 
 const canvas = document.getElementById('fluid-canvas');
